@@ -6,6 +6,7 @@ user.get("/", async (req, res) => {
     const users = await UserSchema.findAll();
     res.send(users);
   } catch (error) {
-    res.status(500).end();
+    console.log(error);
+    res.sendStatus(Number(error) || 500);
   }
 });

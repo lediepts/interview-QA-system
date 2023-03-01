@@ -2,7 +2,7 @@ import { Request } from "express";
 import * as core from "express-serve-static-core";
 
 export interface TokenInfo {
-  info: Info;
+  info: User;
   permissions: string[];
 }
 
@@ -16,26 +16,12 @@ export interface ServiceRequest<
   loginInfo?: TokenInfo;
 }
 
-export interface Permission {
-  id: number;
-  alias: string;
-  name: string;
-  desc: string;
-}
-
-export interface PermissionAssign {
-  id: number;
-  perId: number;
-  userId: number;
-}
-export interface Info {}
 export interface User {
   id: number;
   firstName: string;
   lastName: string;
   firstKana: string;
   lastKana: string;
-  email: string;
   tel: string;
   status: "init" | "active" | "deleted";
 }

@@ -14,7 +14,6 @@ export interface UserModel
   id: CreationOptional<number>;
   firstKana: CreationOptional<string>;
   lastKana: CreationOptional<string>;
-  email: CreationOptional<string>;
   tel: CreationOptional<string>;
   status: CreationOptional<"init" | "active" | "deleted">;
 }
@@ -41,11 +40,6 @@ export const UserSchema = database.define<UserModel>(
       defaultValue: "",
     },
     lastKana: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: "",
-    },
-    email: {
       type: DataTypes.STRING,
       allowNull: true,
       defaultValue: "",

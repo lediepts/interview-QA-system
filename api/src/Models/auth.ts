@@ -7,6 +7,7 @@ import {
 } from "sequelize";
 import database from "../database";
 import { Auth } from "../interfaces";
+import { LoginHistorySchema } from "./loginHistory";
 import { UserSchema } from "./user";
 
 export interface AuthModel
@@ -56,4 +57,7 @@ export const AuthSchema = database.define<AuthModel>(
 
 AuthSchema.belongsTo(UserSchema, {
   foreignKey: "userId",
+});
+AuthSchema.hasOne(LoginHistorySchema, {
+  foreignKey: "authId",
 });

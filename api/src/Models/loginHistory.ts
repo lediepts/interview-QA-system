@@ -6,43 +6,42 @@ import {
   Model,
 } from "sequelize";
 import database from "../database";
-import { Permission } from "../interfaces";
+import { LoginHistory } from "../interfaces";
 
-export interface PermissionModel
-  extends Permission,
+export interface LoginHistoryModel
+  extends LoginHistory,
     Model<
-      InferAttributes<PermissionModel>,
-      InferCreationAttributes<PermissionModel>
+      InferAttributes<LoginHistoryModel>,
+      InferCreationAttributes<LoginHistoryModel>
     > {
   id: CreationOptional<number>;
-  desc: CreationOptional<string>;
 }
 
-export const PermissionSchema = database.define<PermissionModel>(
-  "permissions",
+export const LoginHistorySchema = database.define<LoginHistoryModel>(
+  "loginHistories",
   {
     id: {
       type: DataTypes.BIGINT.UNSIGNED,
       primaryKey: true,
       autoIncrement: true,
     },
-    alias: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    name: {
-      type: DataTypes.STRING,
+    authId: {
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: false,
     },
-    desc: {
-      type: DataTypes.TEXT,
+    type: {
+      type: DataTypes.STRING,
+    },
+    ip: {
+      type: DataTypes.CHAR,
       allowNull: false,
-      defaultValue: "",
+    },
+    success: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
     },
   },
   {
-    timestamps: false,
     engine: "InnoDB",
     charset: "utf8mb4",
   }

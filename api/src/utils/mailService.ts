@@ -18,11 +18,13 @@ class MailService {
       number: true,
     });
     console.log({ code });
-    // this.send(email, {
-    //   html: `<h1>Pass code: ${code}</h1>`,
-    // });
+    if (process.env.TS_NODE_DEV !== "true")
+      this.send(email, {
+        html: `<h1>Pass code: ${code}</h1>`,
+      });
     return code;
   }
+
   async send(
     to: string,
     { html, subject }: { subject?: string; html?: string }

@@ -14,6 +14,7 @@ const PORT: number = parseInt(process.env.PORT as string, 10);
     console.log(`データベースを接続している。。。`);
     await database.sync({
       alter: process.env.TS_NODE_DEV === "true",
+      // force: process.env.TS_NODE_DEV === "true",
     });
     console.log("\x1b[35m%s\x1b[0m", `データベースの接続が完了しました。`);
     console.log(`----------`);
