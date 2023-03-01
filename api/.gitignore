@@ -113,3 +113,5 @@ dist
 .DS_Store
 /libs
 /tmp
+**/*/.DS_Store
+.env
