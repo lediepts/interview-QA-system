@@ -4,7 +4,11 @@ import { Op } from "sequelize";
 import database from "../../database";
 import { ServiceRequest, TokenInfo } from "../../interfaces";
 import { AuthSchema, LoginHistorySchema, UserSchema } from "../../Models";
-import { setAuthCookie, validatorsMiddleware } from "../../utils";
+import {
+  authMiddleware,
+  setAuthCookie,
+  validatorsMiddleware,
+} from "../../utils";
 import MailService from "../../utils/mailService";
 
 export const auth = express.Router();
@@ -156,9 +160,6 @@ auth.post(
           passcode: {
             [Op.ne]: "",
           },
-          updatedAt: {
-            [Op.gte]: new Date(new Date().getTime() - blockTime),
-          },
         },
         include: [
           {
@@ -172,7 +173,7 @@ auth.post(
           exclude: ["createdAt", "updatedAt"],
         },
       });
-      if (!auth) throw 404;
+      if (!auth) throw 400;
 
       if (auth.lockStill > new Date().getTime()) throw 423;
 
@@ -182,25 +183,35 @@ auth.post(
         await LoginHistorySchema.create({
           authId: auth.id,
           ip: forwarded,
-          success: false,
+          success: -1,
           type: "default",
         });
         const limit = Number(process.env.LOGIN_LIMIT || 3);
         const last3Login = await LoginHistorySchema.findAll({
           where: {
             authId: auth.id,
+            updatedAt: {
+              [Op.gte]: new Date(new Date().getTime() - blockTime),
+            },
           },
           order: [["id", "desc"]],
           limit: limit,
         });
-        const successIndex = last3Login.findIndex((f) => f.success);
+        const successIndex = last3Login.findIndex((f) => f.success >= 0);
+        const failCount = last3Login.filter((f) => f.success < 0).length;
         if (last3Login.length === limit && successIndex < 0) {
           await auth.update({
             lockStill: new Date().getTime() + blockTime,
           });
+          await LoginHistorySchema.create({
+            authId: auth.id,
+            ip: forwarded,
+            success: 0,
+            type: "block",
+          });
         }
         res.status(400).send({
-          remain: successIndex < 0 ? 0 : limit - successIndex,
+          remain: successIndex < 0 ? limit - failCount : limit - successIndex,
         });
       } else {
         await LoginHistorySchema.destroy({
@@ -216,7 +227,7 @@ auth.post(
         await LoginHistorySchema.create({
           authId: auth.id,
           ip: forwarded,
-          success: true,
+          success: 1,
           type: "default",
         });
         const userInfo = (auth as any)[`user`];
@@ -236,5 +247,12 @@ auth.post(
       console.log(error);
       res.sendStatus(Number(error) || 500).end();
     }
+  }
+);
+auth.get(
+  "/",
+  authMiddleware.auth,
+  async ({ loginInfo }: ServiceRequest, res: Response) => {
+    res.send(loginInfo);
   }
 );

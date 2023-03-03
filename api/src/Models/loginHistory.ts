@@ -37,7 +37,7 @@ export const LoginHistorySchema = database.define<LoginHistoryModel>(
       allowNull: false,
     },
     success: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

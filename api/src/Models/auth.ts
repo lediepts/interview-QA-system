@@ -44,7 +44,7 @@ export const AuthSchema = database.define<AuthModel>(
       defaultValue: "",
     },
     lockStill: {
-      type: DataTypes.INTEGER.UNSIGNED,
+      type: DataTypes.BIGINT.UNSIGNED,
       allowNull: true,
       defaultValue: 0,
     },

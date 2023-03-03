@@ -47,7 +47,7 @@ export interface LoginHistory {
   authId: number;
   type: string;
   ip: string;
-  success: boolean;
+  success: number;
   createdAt?: string;
   updatedAt?: string;
 }
